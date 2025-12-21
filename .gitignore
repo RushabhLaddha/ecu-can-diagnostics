@@ -1,0 +1,16 @@
+# Build folders
+build/
+cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
