@@ -5,6 +5,8 @@
 #include <chrono>
 #include <memory>
 #include "tasks/CanTx.hpp"
+#include "rtos/MessageQueue.hpp"
+#include "tasks/CanRx.hpp"
 
 int main()
 {
@@ -14,10 +16,21 @@ int main()
         return 1;
     }
 
+    MessageQueue<CanFrame>rxQueue;
+
     CanTx txTask(driver);
+    CanRx rxTask(driver, rxQueue);
     txTask.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    rxTask.start();
+    
+    // Frames printing on console
+    for(auto i = 0; i < 20; i++) {
+        CanFrame frame = rxQueue.pop();
+        std::cout<<"Rx: ID=0x"<<std::hex<<frame.id<<std::dec<<std::endl;
+    }
+
     txTask.stop();
+    rxTask.stop();
     
     return 0;
 }

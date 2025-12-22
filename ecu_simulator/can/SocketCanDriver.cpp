@@ -46,6 +46,22 @@ bool SocketCanDriver::init() {
         return false;
     }
 
+    // === Enable receive own messages ===
+    int recvOwn = 1;
+    if (setsockopt(m_socketFd, SOL_CAN_RAW,
+                   CAN_RAW_RECV_OWN_MSGS, &recvOwn,
+                   sizeof(recvOwn)) < 0) {
+        perror("setsockopt CAN_RAW_RECV_OWN_MSGS");
+    }
+
+    // Allow receive() to wake up periodically
+    struct timeval timeout {};
+    timeout.tv_sec  = 0;
+    timeout.tv_usec = 200000; // 200 ms
+
+    setsockopt(m_socketFd, SOL_SOCKET, SO_RCVTIMEO,
+            &timeout, sizeof(timeout));
+
     return true;
 }
 
@@ -64,8 +80,11 @@ bool SocketCanDriver::receive(CanFrame &frame) {
     struct can_frame canFrame;
 
     ssize_t bytesRead = read(m_socketFd, &canFrame, sizeof(canFrame));
-
+    
     if(bytesRead < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            return false;
+        }
         perror("read");
         return false;
     }

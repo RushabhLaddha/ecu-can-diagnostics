@@ -3,6 +3,7 @@ add_executable(ecu_simulator
     main.cpp
     can/SocketCanDriver.cpp
     tasks/CanTx.cpp
+    tasks/CanRx.cpp
 )
 
 target_include_directories(ecu_simulator PRIVATE
