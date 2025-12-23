@@ -1,10 +1,5 @@
 #include "CanTx.hpp"
 
-#define enginePeriod std::chrono::milliseconds(100)
-#define temperaturePeriod std::chrono::milliseconds(200)
-#define heartbeatPeriod std::chrono::seconds(1)
-
-
 CanTx::CanTx(std::shared_ptr<ICanDriver>driver) : Task("TaskCanTx") , m_driver(std::move(driver)){
 
 }
@@ -45,6 +40,8 @@ void CanTx::sendEngineSpeed() {
     CanFrame frame{};
     frame.id = CanId::EngineSpeed;
     frame.dlc = 2;
+
+    // little endian encoding LSB -> MSB
     frame.data[0] = rpm & 0xFF;
     frame.data[1] = (rpm >> 8) & 0xFF;
 

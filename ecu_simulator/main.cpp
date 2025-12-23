@@ -7,6 +7,7 @@
 #include "tasks/CanTx.hpp"
 #include "rtos/MessageQueue.hpp"
 #include "tasks/CanRx.hpp"
+#include "tasks/Diagnostics.hpp"
 
 int main()
 {
@@ -20,17 +21,17 @@ int main()
 
     CanTx txTask(driver);
     CanRx rxTask(driver, rxQueue);
+    Diagnostics diag(rxQueue);
+
     txTask.start();
     rxTask.start();
-    
-    // Frames printing on console
-    for(auto i = 0; i < 20; i++) {
-        CanFrame frame = rxQueue.pop();
-        std::cout<<"Rx: ID=0x"<<std::hex<<frame.id<<std::dec<<std::endl;
-    }
+    diag.start();
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 
     txTask.stop();
     rxTask.stop();
+    diag.stop();
     
     return 0;
 }
