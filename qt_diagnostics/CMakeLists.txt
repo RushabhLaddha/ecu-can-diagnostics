@@ -18,6 +18,7 @@ add_executable(qt_diagnostics
     ui/CanMonitorTab.cpp
     ui/DiagnosticsTab.cpp
     ui/FaultInjectionTab.cpp
+    ui/model/CanTableModel.cpp
 )
 
 target_include_directories(qt_diagnostics PRIVATE
