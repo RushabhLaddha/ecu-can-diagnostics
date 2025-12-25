@@ -1,7 +1,6 @@
 # This tells, create executable named 'ecu_simulator' and compile main.cpp
 add_executable(ecu_simulator
     main.cpp
-    can/SocketCanDriver.cpp
     tasks/CanTx.cpp
     tasks/CanRx.cpp
     tasks/Diagnostics.cpp

@@ -1,5 +1,5 @@
 #pragma once
-#include "can/ICanDriver.hpp"
+#include "ICanDriver.hpp"
 #include <string>
 
 class SocketCanDriver : public ICanDriver {
