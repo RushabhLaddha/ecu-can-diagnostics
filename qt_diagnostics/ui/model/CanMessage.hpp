@@ -3,6 +3,7 @@
 #include <QString>
 #include <QDateTime>
 #include <cstdint>
+#include <QMetaType>
 
 struct CanMessage {
     uint32_t id;
@@ -10,3 +11,5 @@ struct CanMessage {
     QString data;
     QDateTime timestamp;
 };
+
+Q_DECLARE_METATYPE(CanMessage)

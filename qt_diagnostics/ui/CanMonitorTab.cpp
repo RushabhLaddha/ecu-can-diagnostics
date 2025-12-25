@@ -20,13 +20,8 @@ CanMonitorTab::CanMonitorTab(QWidget *parent) : QWidget(parent) {
 
     auto *layout = new QVBoxLayout(this); // Creates a vertical layout and becomes child of CanMonitorTab
     layout->addWidget(m_tableView); // TableView becomes the child of the vertical layout
+}
 
-    // Dummy data (for now)
-    CanMessage msg;
-    msg.id = 0x101;
-    msg.dlc = 2;
-    msg.data = "DC 05";
-    msg.timestamp = QDateTime::currentDateTime();
-
-    m_model->addMessage(msg);
+CanTableModel* CanMonitorTab::getModel() {
+    return m_model;
 }

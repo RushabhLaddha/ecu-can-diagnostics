@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QDateTime>
+#include<QMetaType>
 
 enum class DiagnosticSeverity {
     INFO,
@@ -14,3 +15,5 @@ struct DiagnosticEvent {
     DiagnosticSeverity severity;
     QString message;
 };
+
+Q_DECLARE_METATYPE(DiagnosticEvent)

@@ -14,24 +14,8 @@ DiagnosticsTab::DiagnosticsTab(QWidget *parent) : QWidget(parent) {
 
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(m_listView);
+}
 
-    DiagnosticEvent e1 {
-        QDateTime::currentDateTime(),
-        DiagnosticSeverity::INFO,
-        "Heartbeat receved"
-    };
-    DiagnosticEvent e2 {
-        QDateTime::currentDateTime(),
-        DiagnosticSeverity::WARN,
-        "Temperature approaching limit"
-    };
-    DiagnosticEvent e3 {
-        QDateTime::currentDateTime(),
-        DiagnosticSeverity::ERROR,
-        "Engine Speed message Timeout"
-    };
-
-    m_model->addEvent(e1);
-    m_model->addEvent(e2);
-    m_model->addEvent(e3);
+DiagnosticModel* DiagnosticsTab::getModel() {
+    return m_model;
 }

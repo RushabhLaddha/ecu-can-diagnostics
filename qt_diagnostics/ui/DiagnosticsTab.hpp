@@ -9,6 +9,8 @@ class DiagnosticsTab : public QWidget {
     Q_OBJECT
 public:
     explicit DiagnosticsTab(QWidget *parent = nullptr);
+
+    DiagnosticModel* getModel();
 private:
     QListView* m_listView;
     DiagnosticModel* m_model;
