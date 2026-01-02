@@ -21,6 +21,7 @@ add_executable(qt_diagnostics
     ui/model/CanTableModel.cpp
     ui/model/DiagnosticModel.cpp
     backend/CanBackendWorker.cpp
+    diagnostic/QDiagnostics.cpp
 )
 
 target_include_directories(qt_diagnostics PRIVATE

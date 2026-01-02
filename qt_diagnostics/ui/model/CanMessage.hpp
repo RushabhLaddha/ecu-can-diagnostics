@@ -9,6 +9,7 @@ struct CanMessage {
     uint32_t id;
     int dlc;
     QString data;
+    QByteArray rawData;
     QDateTime timestamp;
 };
 

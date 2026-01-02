@@ -25,7 +25,7 @@ void Diagnostics::processFrame(const CanFrame& frame) {
                 return;
             }
             uint16_t rpm = frame.data[0] | (frame.data[1] << 8);
-            if(rpm < 500 || rpm > 6000) {
+            if(rpm < 500 || rpm > 4000) {
                 std::cout<<"[DIAG] : EngineSpeed out of range "<<rpm<<std::endl;
             }
             break;
@@ -37,7 +37,7 @@ void Diagnostics::processFrame(const CanFrame& frame) {
                 return;
             }
             uint8_t temp = frame.data[0];
-            if(temp > 130) {
+            if(temp > 150) {
                 std::cout<<"[DIAG] : Temperature out of range "<<static_cast<int>(temp)<<std::endl;
             }
             break;

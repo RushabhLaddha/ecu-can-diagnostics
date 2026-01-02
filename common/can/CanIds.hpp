@@ -7,10 +7,16 @@ namespace CanId {
     constexpr uint32_t Heartbeat = 0x700;
 }
 
+namespace DLC {
+    constexpr uint32_t EngineSpeedDLC = 2;
+    constexpr uint32_t TemperatureDLC = 1;
+    constexpr uint32_t HeartbeatDLC = 1;
+}
+
 #define enginePeriod std::chrono::milliseconds(100)
 #define temperaturePeriod std::chrono::milliseconds(200)
 #define heartbeatPeriod std::chrono::seconds(1)
 
-#define engineTimeout enginePeriod * 3
-#define TemperatureTimeout temperaturePeriod * 3
-#define heartbeatTimeout heartbeatPeriod * 3
+constexpr auto engineTimeout = enginePeriod * 3;
+constexpr auto TemperatureTimeout = temperaturePeriod * 3;
+constexpr auto heartbeatTimeout = heartbeatPeriod * 3;

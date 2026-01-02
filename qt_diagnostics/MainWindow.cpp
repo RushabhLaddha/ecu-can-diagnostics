@@ -6,6 +6,7 @@
 #include "ui/model/DiagnosticModel.hpp"
 
 #include "backend/CanBackendWorker.hpp"
+#include "diagnostic/QDiagnostics.hpp"
 
 #include <QTabWidget>
 #include <QThread>
@@ -25,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     m_workerThread = new QThread(this);
     m_worker = new CanBackendWorker();
+    m_diag = new QDiagnostics(this);
 
     m_worker->moveToThread(m_workerThread);
 
@@ -39,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     auto *diagModel = m_DiagnosticsTab->getModel();
     connect(m_worker, &CanBackendWorker::diagEventRaised, diagModel, &DiagnosticModel::addEvent);
+
+    connect(m_diag, &QDiagnostics::diagEventRaised, diagModel, &DiagnosticModel::addEvent);
+
+    connect(m_worker, &CanBackendWorker::canMessageReceived, m_diag, &QDiagnostics::onCanMessageReceived);
 
     m_workerThread->start();
 

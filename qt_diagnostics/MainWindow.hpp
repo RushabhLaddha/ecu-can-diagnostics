@@ -6,6 +6,7 @@ class QTabWidget;
 class CanMonitorTab;
 class DiagnosticsTab;
 class CanBackendWorker;
+class QDiagnostics;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT // Must needed macro for all the classes derived from QObject class to enable Signal/Slots etc.
@@ -18,4 +19,5 @@ private:
     DiagnosticsTab *m_DiagnosticsTab;
     QThread *m_workerThread;
     CanBackendWorker *m_worker;
+    QDiagnostics *m_diag;
 };
