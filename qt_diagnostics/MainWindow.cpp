@@ -19,10 +19,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_tabWidget = new QTabWidget(this);
     m_CanMonitorTab = new CanMonitorTab(this);
     m_DiagnosticsTab = new DiagnosticsTab(this);
+    m_FaultInjectionTab = new FaultInjectionTab(this);
 
     m_tabWidget->addTab(m_CanMonitorTab, "CAN Monitor");
     m_tabWidget->addTab(m_DiagnosticsTab, "Diagnostics");
-    m_tabWidget->addTab(new FaultInjectionTab(this), "Fault Injection");
+    m_tabWidget->addTab(m_FaultInjectionTab, "Fault Injection");
 
     m_workerThread = new QThread(this);
     m_worker = new CanBackendWorker();
@@ -45,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_diag, &QDiagnostics::diagEventRaised, diagModel, &DiagnosticModel::addEvent);
 
     connect(m_worker, &CanBackendWorker::canMessageReceived, m_diag, &QDiagnostics::onCanMessageReceived);
+
+    connect(m_FaultInjectionTab, &FaultInjectionTab::faultRequested, m_worker, &CanBackendWorker::injectFault);
 
     m_workerThread->start();
 

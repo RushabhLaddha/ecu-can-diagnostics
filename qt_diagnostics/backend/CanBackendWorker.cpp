@@ -50,3 +50,7 @@ void CanBackendWorker::processFrame(const CanFrame &frame) {
 
     emit canMessageReceived(msg);
 }
+
+void CanBackendWorker::injectFault(FaultType fault) {
+    m_fault = fault;
+}
