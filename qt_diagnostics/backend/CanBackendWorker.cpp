@@ -1,6 +1,7 @@
 #include "CanBackendWorker.hpp"
 #include <QThread>
 #include <QDateTime>
+#include "ipc/FaultIpcClient.hpp"
 
 CanBackendWorker::CanBackendWorker(QObject *parent) : QObject(parent) {
 
@@ -16,15 +17,15 @@ void CanBackendWorker::start() {
         return;
     }
 
-    m_running = true;
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, &CanBackendWorker::pollCan);
+    m_timer->start(5);
+}
 
-    while(m_running) {
-        CanFrame frame;
-        if(m_driver->receive(frame)) {
-            processFrame(frame);
-        } else {
-            QThread::msleep(5);
-        }
+void CanBackendWorker::pollCan() {
+    CanFrame frame;
+    if(m_driver->receive(frame)) {
+        processFrame(frame);
     }
 }
 
@@ -52,5 +53,5 @@ void CanBackendWorker::processFrame(const CanFrame &frame) {
 }
 
 void CanBackendWorker::injectFault(FaultType fault) {
-    m_fault = fault;
+    FaultIpcClient::sendFault(fault);
 }

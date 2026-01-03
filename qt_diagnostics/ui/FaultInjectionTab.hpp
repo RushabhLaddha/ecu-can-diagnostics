@@ -17,4 +17,5 @@ private:
     QPushButton* m_stopAllBtn;
     QPushButton* m_wrongValueBtn;
     QPushButton* m_wrongDlcBtn;
+    QPushButton* m_resetBtn;
 };

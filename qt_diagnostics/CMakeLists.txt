@@ -22,6 +22,7 @@ add_executable(qt_diagnostics
     ui/model/DiagnosticModel.cpp
     backend/CanBackendWorker.cpp
     diagnostic/QDiagnostics.cpp
+    ipc/FaultIpcClient.cpp
 )
 
 target_include_directories(qt_diagnostics PRIVATE

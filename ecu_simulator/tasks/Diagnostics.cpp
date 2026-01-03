@@ -66,6 +66,7 @@ void Diagnostics::checkTimeouts() {
         }
         if(currentTime - m_lastSeen[id] > timeout) {
             std::cout<<"[DIAG] Timeout exceeded for "<<name<<std::endl;
+            m_lastSeen.erase(id);
             return;
         }
     };

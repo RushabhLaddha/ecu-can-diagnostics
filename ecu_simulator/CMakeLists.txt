@@ -4,6 +4,7 @@ add_executable(ecu_simulator
     tasks/CanTx.cpp
     tasks/CanRx.cpp
     tasks/Diagnostics.cpp
+    ipc/FaultIpcServer.cpp
 )
 
 target_include_directories(ecu_simulator PRIVATE

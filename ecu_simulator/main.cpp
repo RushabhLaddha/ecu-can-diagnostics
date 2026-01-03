@@ -8,6 +8,7 @@
 #include "rtos/MessageQueue.hpp"
 #include "tasks/CanRx.hpp"
 #include "tasks/Diagnostics.hpp"
+#include "ipc/FaultIpcServer.hpp"
 
 int main()
 {
@@ -22,13 +23,16 @@ int main()
     CanTx txTask(driver);
     CanRx rxTask(driver, rxQueue);
     Diagnostics diag(rxQueue);
+    FaultIpcServer ipc(txTask);
 
     txTask.start();
     rxTask.start();
     diag.start();
+    ipc.start();
 
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(100));
 
+    ipc.stop();
     txTask.stop();
     rxTask.stop();
     diag.stop();

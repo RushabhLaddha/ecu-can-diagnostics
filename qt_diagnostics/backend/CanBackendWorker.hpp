@@ -8,6 +8,7 @@
 #include "can/CanFrame.hpp"
 #include "can/SocketCanDriver.hpp"
 #include "qt_types/FaultTypeQt.hpp"
+#include <QTimer>
 
 class CanBackendWorker : public QObject {
     Q_OBJECT
@@ -19,6 +20,7 @@ public slots:
     void start();
     void stop();
     void injectFault(FaultType fault);
+    void pollCan();
 
 signals:
     void canMessageReceived(const CanMessage &msg);
@@ -28,6 +30,7 @@ private:
     std::atomic<bool> m_running {false};
     std::unique_ptr<SocketCanDriver> m_driver;
     FaultType m_fault;
+    QTimer* m_timer {nullptr};
 
     void processFrame(const CanFrame &frame);
 };
