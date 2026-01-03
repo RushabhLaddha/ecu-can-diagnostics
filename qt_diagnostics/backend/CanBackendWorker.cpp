@@ -19,7 +19,7 @@ void CanBackendWorker::start() {
 
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &CanBackendWorker::pollCan);
-    m_timer->start(5);
+    m_timer->start(5); // 5 ms timeout
 }
 
 void CanBackendWorker::pollCan() {
@@ -45,6 +45,7 @@ void CanBackendWorker::processFrame(const CanFrame &frame) {
     QString dataStr;
     for (int i = 0; i < frame.dlc; ++i) {
         dataStr += QString("%1 ").arg(frame.data[i], 2, 16, QLatin1Char('0')).toUpper();
+                                //arg(value, field width, base, fill char); 
     }
     msg.data = dataStr.trimmed();
     msg.timestamp = QDateTime::currentDateTime();

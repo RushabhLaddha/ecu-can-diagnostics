@@ -33,15 +33,15 @@ void FaultIpcServer::stop() {
 void FaultIpcServer::serverLoop() {
     unlink(SOCKET_PATH);
 
-    m_serverFd = socket(AF_UNIX, SOCK_STREAM, 0);
+    m_serverFd = socket(AF_UNIX, SOCK_STREAM, 0); // Created Unix Domain Socket - Local IPC
     if(m_serverFd < 0) {
         perror("socket");
         return;
     }
 
-    sockaddr_un addr {};
+    sockaddr_un addr {}; // Unix socket address
     addr.sun_family = AF_UNIX;
-    std::strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
+    std::strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1); // Unix socket are filesystem entries
 
     if(bind(m_serverFd, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) < 0) {
         perror("bind");

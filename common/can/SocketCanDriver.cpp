@@ -22,39 +22,55 @@ SocketCanDriver::~SocketCanDriver() {
 }
 
 bool SocketCanDriver::init() {
-    m_socketFd = socket(PF_CAN, SOCK_RAW, CAN_RAW); 
+    m_socketFd = socket(PF_CAN, SOCK_RAW, CAN_RAW); // Creates a Linux SocketCAN raw socket
 
     if(m_socketFd < 0) {
         perror("socket");
         return false;
     }
 
-    struct ifreq ifr {};
+    struct ifreq ifr {}; // Use to convert interface name to interface index
     std::strncpy(ifr.ifr_name, m_interfaceName.c_str(), IFNAMSIZ - 1);
 
-    if(ioctl(m_socketFd, SIOCGIFINDEX, &ifr) < 0) {
+    if(ioctl(m_socketFd, SIOCGIFINDEX, &ifr) < 0) { // populates interface index in ifr struct
         perror("ioctl");
         return false;
     }
 
-    struct sockaddr_can addr {};
+    struct sockaddr_can addr {}; // CAN-specific socket address
     addr.can_family = AF_CAN;
-    addr.can_ifindex = ifr.ifr_ifindex;
+    addr.can_ifindex = ifr.ifr_ifindex; // assigns interface index obtained from ioctl
 
-    if(bind(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0) {
+    if(bind(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0) { // Bind m_socketFd to addr
         perror("bind");
         return false;
     }
 
+    // CAN filters - Only the selected CAN frames will wake up the thread improving efficiency
+    struct can_filter filters[3];
+    filters[0].can_id   = 0x101;
+    filters[0].can_mask = CAN_SFF_MASK;
+
+    filters[1].can_id   = 0x102;
+    filters[1].can_mask = CAN_SFF_MASK;
+
+    filters[2].can_id   = 0x700;
+    filters[2].can_mask = CAN_SFF_MASK;
+
+    if (setsockopt(m_socketFd, SOL_CAN_RAW, CAN_RAW_FILTER, &filters, sizeof(filters)) < 0)
+    {
+        perror("setsockopt CAN_RAW_FILTER");
+        return false;
+    }
+
+
     // === Enable receive own messages ===
     int recvOwn = 1;
-    if (setsockopt(m_socketFd, SOL_CAN_RAW,
-                   CAN_RAW_RECV_OWN_MSGS, &recvOwn,
-                   sizeof(recvOwn)) < 0) {
+    if (setsockopt(m_socketFd, SOL_CAN_RAW, CAN_RAW_RECV_OWN_MSGS, &recvOwn, sizeof(recvOwn)) < 0) {
         perror("setsockopt CAN_RAW_RECV_OWN_MSGS");
     }
 
-    // Allow receive() to wake up periodically
+    // Allow receive() to wake up periodically prevents infinite blocking
     struct timeval timeout {};
     timeout.tv_sec  = 0;
     timeout.tv_usec = 200000; // 200 ms
@@ -82,7 +98,7 @@ bool SocketCanDriver::receive(CanFrame &frame) {
     ssize_t bytesRead = read(m_socketFd, &canFrame, sizeof(canFrame));
     
     if(bytesRead < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) { // read() failed but due to timeout
             return false;
         }
         perror("read");

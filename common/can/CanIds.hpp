@@ -13,9 +13,9 @@ namespace DLC {
     constexpr uint32_t HeartbeatDLC = 1;
 }
 
-#define enginePeriod std::chrono::milliseconds(100)
-#define temperaturePeriod std::chrono::milliseconds(200)
-#define heartbeatPeriod std::chrono::seconds(1)
+constexpr auto enginePeriod  = std::chrono::milliseconds(100);
+constexpr auto temperaturePeriod = std::chrono::milliseconds(200);
+constexpr auto heartbeatPeriod = std::chrono::seconds(1);
 
 constexpr auto engineTimeout = enginePeriod * 3;
 constexpr auto TemperatureTimeout = temperaturePeriod * 3;
