@@ -11,6 +11,8 @@ public:
     explicit CanMonitorTab(QWidget *parent = nullptr);
 
     CanTableModel* getModel();
+private slots:
+    void scrollToBottom();
 private:
     QTableView* m_tableView;
     CanTableModel* m_model;

@@ -4,6 +4,7 @@
 #include <QTableView>
 #include <QVBoxLayout>
 #include <QHeaderView>
+#include <QScrollBar>
 
 CanMonitorTab::CanMonitorTab(QWidget *parent) : QWidget(parent) {
 
@@ -11,6 +12,8 @@ CanMonitorTab::CanMonitorTab(QWidget *parent) : QWidget(parent) {
     m_tableView = new QTableView(this); // UI - Asks questions to the model to print the data
 
     m_tableView->setModel(m_model); // Connects model and view. View internally calls the functions which we defined in the CanTableModel class known as inversion of control
+
+    connect(m_model, &QAbstractItemModel::rowsInserted, this, &CanMonitorTab::scrollToBottom);
 
     m_tableView->horizontalHeader()->setStretchLastSection(true); // Last column expands to fill remaining space
 
@@ -24,4 +27,11 @@ CanMonitorTab::CanMonitorTab(QWidget *parent) : QWidget(parent) {
 
 CanTableModel* CanMonitorTab::getModel() {
     return m_model;
+}
+
+void CanMonitorTab::scrollToBottom() {
+    auto *bar = m_tableView->verticalScrollBar();
+    if(bar->value() == bar->maximum()) {
+        m_tableView->scrollToBottom();
+    }
 }
