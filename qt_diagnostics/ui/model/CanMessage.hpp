@@ -11,6 +11,7 @@ struct CanMessage {
     QString data;
     QByteArray rawData;
     QDateTime timestamp;
+    bool valid;
 };
 
 Q_DECLARE_METATYPE(CanMessage)

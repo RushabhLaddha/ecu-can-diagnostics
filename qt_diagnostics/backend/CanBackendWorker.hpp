@@ -23,7 +23,7 @@ public slots:
     void pollCan();
 
 signals:
-    void canMessageReceived(const CanMessage &msg);
+    void canMessageReceived(CanMessage msg);
     void diagEventRaised(const DiagnosticEvent &event);
 
 private:

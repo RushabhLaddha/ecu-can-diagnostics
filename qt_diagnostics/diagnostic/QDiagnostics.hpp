@@ -14,10 +14,11 @@ public:
     explicit QDiagnostics(QObject* parent = nullptr);
 
 public slots:
-    void onCanMessageReceived(const CanMessage &msg);
+    void onCanMessageReceived(CanMessage msg);
     
 signals:
     void diagEventRaised(const DiagnosticEvent &event);
+    void eventProcessed(const CanMessage &msg);
 
 private slots:
     void checkTimeout();
@@ -26,5 +27,5 @@ private:
     std::unordered_map<uint32_t, QDateTime> m_lastSeen;
     QTimer m_timer;
 
-    void checkRanges(const CanMessage &msg);
+    void checkRanges(CanMessage &msg);
 };

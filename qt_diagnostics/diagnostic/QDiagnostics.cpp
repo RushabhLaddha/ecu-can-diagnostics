@@ -8,17 +8,21 @@ QDiagnostics::QDiagnostics(QObject *parent) : QObject(parent) {
     m_timer.start();
 }
 
-void QDiagnostics::onCanMessageReceived(const CanMessage &msg) {
+void QDiagnostics::onCanMessageReceived(CanMessage msg) {
     m_lastSeen[msg.id] = msg.timestamp;
 
     checkRanges(msg);
+
+    emit eventProcessed(msg);
 }
 
-void QDiagnostics::checkRanges(const CanMessage &msg) {
+void QDiagnostics::checkRanges(CanMessage &msg) {
     const QDateTime now = QDateTime::currentDateTime();
+    msg.valid = true;
     if(msg.id == CanId::EngineSpeed) {
         if(msg.dlc != DLC::EngineSpeedDLC) {
             emit diagEventRaised({now, DiagnosticSeverity::ERROR, QString("EngineSpeed DLC mismatch : Expected 2, Got %1").arg(msg.dlc)});
+            msg.valid = false;
             return;
         }
 
@@ -26,11 +30,13 @@ void QDiagnostics::checkRanges(const CanMessage &msg) {
 
         if(rpm > 4000) {
             emit diagEventRaised({now, DiagnosticSeverity::WARN, QString("EngineSpeed too high : %1 rpm").arg(rpm)});
+            msg.valid = false;
         }
         
     } else if(msg.id == CanId::Temperature) {
         if(msg.dlc != DLC::TemperatureDLC) {
             emit diagEventRaised({now, DiagnosticSeverity::ERROR, QString("Temperature DLC mismatch : Expected 1, Got %1").arg(msg.dlc)});
+            msg.valid = false;
             return;
         }
 
@@ -38,10 +44,12 @@ void QDiagnostics::checkRanges(const CanMessage &msg) {
 
         if(temperature > 150) {
             emit diagEventRaised({now, DiagnosticSeverity::WARN, QString("Temperature too high : %1").arg(temperature)});
+            msg.valid = false;
         }
     } else if(msg.id == CanId::Heartbeat) {
         if(msg.dlc != DLC::HeartbeatDLC) {
             emit diagEventRaised({now, DiagnosticSeverity::ERROR, QString("Heartbeat DLC mismatch : Expected 1, Got %1").arg(msg.dlc)});
+            msg.valid = false;
             return;
         }
 
@@ -49,6 +57,7 @@ void QDiagnostics::checkRanges(const CanMessage &msg) {
 
         if(heartbeat != 0xAA) {
             emit diagEventRaised({now, DiagnosticSeverity::ERROR, QString("ECU is dead, Expected 0xAA, Got %1").arg(heartbeat)});
+            msg.valid = false;
         }
     }
 }

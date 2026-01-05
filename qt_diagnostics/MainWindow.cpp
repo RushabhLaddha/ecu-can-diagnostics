@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this, &QObject::destroyed, m_worker, &CanBackendWorker::stop);
 
     auto *canMonitorModel = m_CanMonitorTab->getModel();
-    connect(m_worker, &CanBackendWorker::canMessageReceived, canMonitorModel, &CanTableModel::addMessage);
+    connect(m_diag, &QDiagnostics::eventProcessed, canMonitorModel, &CanTableModel::addMessage);
 
     auto *diagModel = m_DiagnosticsTab->getModel();
     connect(m_worker, &CanBackendWorker::diagEventRaised, diagModel, &DiagnosticModel::addEvent);

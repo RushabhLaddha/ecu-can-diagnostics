@@ -1,4 +1,5 @@
 #include "CanTableModel.hpp"
+#include <QBrush>
 
 CanTableModel::CanTableModel(QObject *parent) : QAbstractTableModel(parent) {
 
@@ -13,18 +14,28 @@ int CanTableModel::columnCount(const QModelIndex &) const {
 }
 
 QVariant CanTableModel::data(const QModelIndex &index, int role) const {
-    if(!index.isValid() || role != Qt::DisplayRole) {
+    if(!index.isValid()) {
         return {};
     }
 
     const auto &msg = m_messages.at(index.row());  
-    switch(index.column()) {
-        case 0: return QString("0x%1").arg(msg.id, 0, 16);
-        case 1: return msg.dlc;
-        case 2: return msg.data;
-        case 3: return msg.timestamp.toString("hh:mm:ss.zzz");
-        default: return {};
+    if(role == Qt::DisplayRole) {
+        switch(index.column()) {
+            case 0: return QString("0x%1").arg(msg.id, 0, 16);
+            case 1: return msg.dlc;
+            case 2: return msg.data;
+            case 3: return msg.timestamp.toString("hh:mm:ss.zzz");
+            default: return {};
+        }
     }
+
+    if(role == Qt::BackgroundRole) {
+        if(!msg.valid) {
+            return QBrush(Qt::red);
+        }
+    }
+
+    return {};
 }
 
 QVariant CanTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
